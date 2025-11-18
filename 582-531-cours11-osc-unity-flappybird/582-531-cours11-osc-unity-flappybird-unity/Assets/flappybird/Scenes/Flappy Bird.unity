@@ -294,7 +294,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae79f9d99372a6b438f800230f434b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  value: 0
   oscReceiver: {fileID: 2115046488}
+  oscTransmitter: {fileID: 2115046487}
   player: {fileID: 527830928}
   spawner: {fileID: 2105631072}
   ground: {fileID: 55615832}

@@ -6,7 +6,10 @@ using extOSC;
 public class GameManager : MonoBehaviour
 {
     private int etatEnMemoire = 1; // Le code initalise l'état initial du bouton comme relâché
+    public int value;
     public extOSC.OSCReceiver oscReceiver;
+    public extOSC.OSCTransmitter oscTransmitter;
+
     public static float Proportion(float value, float inputMin, float inputMax, float outputMin, float outputMax)
     {
         return Mathf.Clamp(((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin), outputMin, outputMax);
@@ -80,6 +83,17 @@ public class GameManager : MonoBehaviour
 
     public void Stop()
     {
+
+        var oSCMessage = new OSCMessage("/pixel");  // CHANGER l'adresse /pixel pour l'adresse désirée
+
+        // AJOUTER autant d'arguments que désiré
+        // Dans cet exemple, trois arguments de type entiers (int) sont ajoutés au message
+        oSCMessage.AddValue(OSCValue.Int(255)); // Ajoute l'entier 255
+        oSCMessage.AddValue(OSCValue.Int(0)); // Ajoute un autre 255
+        oSCMessage.AddValue(OSCValue.Int(0)); // Ajoute un troisième 255
+
+        // Envoyer le message 
+        oscTransmitter.Send(oSCMessage);
         //Time.timeScale = 0f;
         player.enabled = false;
         spawner.enabled = false;
@@ -135,5 +149,36 @@ public class GameManager : MonoBehaviour
             Play();
         }
     }
+
+    // FONCTION QUI SERA APPELÉE LORSQU'UN N'IMPORTTE QUEL MESSAGE OSC EST REÇU
+    // receivedOscMessage est le message reçu
+    void myOscMessageParser(MicroOscMessage & receivedOscMessage)
+    {
+        // Ici, un if et receivedOscMessage.checkOscAddress() est utilisé pour traiter les différents messages
+        if (receivedOscMessage.checkOscAddress("/pixel"))
+        {  // MODIFIER /pixel pour l'adresse qui sera reçue
+            int premierArgument = receivedOscMessage.nextAsInt(); // Récupérer le premier argument du message en tant que int
+            int deuxiemerArgument = receivedOscMessage.nextAsInt(); // SI NÉCESSAIRE, récupérer un autre int
+            int troisiemerArgument = receivedOscMessage.nextAsInt(); // SI NÉCESSAIRE, récupérer un autre int
+
+            // UTILISER ici les arguments récupérés
+
+            // SI NÉCESSAIRE, ajouter d'autres if pour recevoir des messages avec d'autres adresses
+        }
+        else if (receivedOscMessage.checkOscAddress("/autre"))
+        {  // MODIFIER /autre une autre adresse qui sera reçue
+           // ...
+        }
+    }
+    void loop()
+    {
+        myOsc.onOscMessageReceived(myOscMessageParser);
+
+        // ... ici, tout le code est ralenti, onOscMessageReceived() inclu
+
+        delay(1);
+    }
+
+
 
 }
